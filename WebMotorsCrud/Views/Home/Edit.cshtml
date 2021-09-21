@@ -1,0 +1,205 @@
+﻿@model WM.App.ViewModels.AnuncioViewModel
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Editar</h1>
+
+<h4>Edite os itens do seu anúncio</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            @*<div class="form-group">
+                    <label asp-for="ID" class="control-label"></label>
+                    <input asp-for="ID" class="form-control" />
+                    <span asp-validation-for="ID" class="text-danger"></span>
+                </div>*@
+            <div class="form-group">
+                <label asp-for="Make" class="control-label"></label>
+                <select asp-for="Make" class="form-control" id="cmbMake" disabled></select>
+                <span asp-validation-for="Make" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Model" class="control-label"></label>
+                <select asp-for="Model" class="form-control" id="cmbModel" disabled></select>
+                <span asp-validation-for="Model" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Version" class="control-label"></label>
+                <select asp-for="Version" class="form-control" id="cmbVersion" disabled></select>
+                <span asp-validation-for="Version" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Year" class="control-label"></label>
+                <input asp-for="Year" class="form-control" />
+                <span asp-validation-for="Year" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="KM" class="control-label"></label>
+                <input asp-for="KM" class="form-control" />
+                <span asp-validation-for="KM" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Obs" class="control-label"></label>
+                <input asp-for="Obs" class="form-control" />
+                <span asp-validation-for="Obs" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Salvar" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Voltar</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+
+<script>
+    $(document).ready(function () {
+        callMakeAPI();
+    });
+
+
+    function callMakeAPI()
+    {
+        let url = "@Url.Action("callMakeAPI", "Make")";
+        let cmb = $("#cmbMake");
+
+        $.ajax({
+        type: "POST",
+        url: url,
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+            success: function (response)
+            {
+                if (response.isValid)
+                {
+                    cmb.html('');
+                    cmb.prop('disabled', false);
+
+                    cmb.append("<option value>Selecione uma opção abaixo</option>");
+                    response.lsMakes.forEach((key) => {
+                        cmb.append('<option value="' + key.id + '|' + key.name + '">' + key.name + '</option>');
+                    });
+                    cmb.prop('disabled', false);
+
+
+                }
+            },
+            error: function (response) {
+        cmb.prop('disabled', true);
+            alert("Erro ao chamar API");
+            }
+        });
+    }
+    function callModelAPI(id)
+    {
+        debugger;
+        var url = "@Url.Action("callModelAPI", "Modelo")/"+id;
+        let cmb = $("#cmbModel");
+
+        $.ajax({
+        type: "GET",
+        url: url,
+        dataType: "json",
+        contentType: "application/json; charset=utf-8",
+            success: function (response)
+            {
+                debugger;
+                if (response.isValid)
+                {
+                    cmb.html('');
+                    cmb.prop('disabled', false);
+
+                    cmb.append("<option value>Selecione uma opção abaixo</option>");
+                    response.lsModel.forEach((key) => {
+                        cmb.append('<option value="' + key.id + '|' + key.name + '">' + key.name + '</option>');
+                    });
+                    cmb.prop('disabled', false);
+                }
+            },
+            error: function (response) {
+                cmb.prop('disabled', true);
+                alert("Erro ao chamar API");
+            }
+        });
+    }
+    function callVersionAPI(id)
+    {
+        debugger;
+        var url = "@Url.Action("callVersionAPI", "Version")/"+id;
+        let cmb = $("#cmbVersion");
+        console.log(url);
+
+        $.ajax({
+        type: "GET",
+        url: url,
+        dataType: "json",
+        contentType: "application/json; charset=utf-8",
+            success: function (response)
+            {
+                debugger;
+                if (response.isValid)
+                {
+                    cmb.html('');
+                    cmb.prop('disabled', false);
+
+                    cmb.append("<option value>Selecione uma opção abaixo</option>");
+                    response.lsVersion.forEach((key) => {
+                        cmb.append('<option value="' + key.id + '|' + key.name + '">' + key.name + '</option>');
+                    });
+                    cmb.prop('disabled', false);
+                }
+            },
+            error: function (response) {
+                cmb.prop('disabled', true);
+                alert("Erro ao chamar API");
+            }
+        });
+}
+
+    $("#cmbMake").change(function () {
+        var id = $("#cmbMake").val();
+
+
+        if (id != '') {
+            id = id.split("|")[0];
+            callModelAPI(parseInt(id));
+        }
+
+
+    });
+
+    $("#cmbModel").change(function () {
+        var id = $("#cmbModel").val();
+        console.log(id);
+
+
+        if (id != '') {
+            id = id.split("|")[0];
+            callVersionAPI(parseInt(id));
+        }
+
+
+    });
+
+
+
+
+
+
+
+
+
+</script>
+
+
+}
